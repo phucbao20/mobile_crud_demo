@@ -31,6 +31,12 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "894bd0bd-4d21-4837-9518-63a04ec3b6f9"
+      }
+    },
+    "owner": "phucbao20"
   }
 }
