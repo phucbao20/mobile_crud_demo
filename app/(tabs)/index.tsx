@@ -1,65 +1,81 @@
-import { Controller, useForm } from "react-hook-form";
-import { Text, View} from "react-native";
-import { Button, TextInput } from 'react-native-paper';
+
+import { Link } from 'expo-router';
+import { Text, View } from 'react-native';
+import { DataTable, Button } from 'react-native-paper';
+import { useDispatch } from 'react-redux';
+import { useDeletePostMutation, useGetPostsQuery } from '../Product/product.service';
+import { startEditPost } from '../Product/product.slice';
+import { Fragment } from 'react';
+
+
 
 export default function HomeScreen() {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    reset
-  } = useForm({
-    defaultValues: {
-      firstName: "",
-      lastName: "",
-    },
-  })
-  const onSubmit = (data: any) => {
-    console.log(data)
-    reset({ 
-      firstName: "",
-      lastName: ""})
+
+  // console.log(listProducts);
+  //isLoading là dành cho lần fetch đầu tiên
+  //isFetching là cho mỗi lần gọi API
+  const { data, isLoading, isFetching } = useGetPostsQuery()
+  const [deletePost] = useDeletePostMutation()
+  const distpath = useDispatch()
+  const startEdit = (id: number) => {
+    distpath(startEditPost(id))
+  }
+  const handlDelete = (id: number) => {
+    deletePost(id)
   }
 
   return (
-    <View className="flex flex-1 justify-center">
-      <Controller
-        control={control}
-        rules={{
-          required: true,
-        }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            label="First Name"
-            onBlur={onBlur}
-            value={value}
-            onChangeText={onChange}
-          />
+    <View className='bg-white w-screen h-screen'>
+      <View className='px-[30] pt-[50]'>
+        <View className='px-[12] py-[10] font-bold bg-blue-600 rounded-lg'>
+          <Text className=' text-2xl text-white '>Product</Text>
+        </View>
+        <View className='!pt-[10]'>
+          <View className='pl-52'>
+            <Button className='bg-green-700 w-40' mode="contained"> <Link replace href="./demo-route">Create</Link> </Button>
+          </View>
+          <DataTable className='w-full h-full'>
+            <DataTable.Header>
+              <DataTable.Title >STT</DataTable.Title>
+              <DataTable.Title numeric>Name</DataTable.Title>
+              <DataTable.Title numeric>Brand</DataTable.Title>
+              <DataTable.Title numeric>Date</DataTable.Title>
+              <DataTable.Title numeric>Edit</DataTable.Title>
+              <DataTable.Title numeric>Delete</DataTable.Title>
+            </DataTable.Header>
+            {isFetching && (
+              <Fragment>
 
-        )}
-        name="firstName"
-      />
-      {errors.firstName && <Text>This is required.</Text>}
+              </Fragment>
+            )}
+            {!isFetching && data?.map((product, index) => (
+              <DataTable.Row key={product.id}>
+                <DataTable.Cell >{index + 1}</DataTable.Cell>
+                <DataTable.Cell >{product.name}</DataTable.Cell>
+                <DataTable.Cell >{product.brand}</DataTable.Cell>
+                <DataTable.Cell >{product.date}</DataTable.Cell>
+                <DataTable.Cell >
+                  <Link onPress={() => startEdit(product.id)} href={'./createProduct'}>
+                    Edit
+                  </Link>
+                </DataTable.Cell>
+                <DataTable.Cell>
+                  <Button
+                    mode="contained"
+                    onPress={() => handlDelete(product.id)}
+                    compact
+                  >
+                    Delete
+                  </Button>
+                </DataTable.Cell>
+              </DataTable.Row>
+            ))}
+          </DataTable>
+        </View>
+      </View>
 
-      <Controller
-        control={control}
-        rules={{
-          maxLength: 100,
-        }}
-        render={({ field: { onChange, onBlur, value } }) => (
-
-          <TextInput
-          label="Last Name"
-          onBlur={onBlur}
-          value={value}
-          onChangeText={onChange}
-        />
-        )}
-        name="lastName"
-      />
-      <Button icon="camera" mode="contained" onPress={handleSubmit(onSubmit)}>
-        Press me
-      </Button>
+      {/* <Link href="./demo-route" style ={{color : 'blue'}}>Go to DemoRoute</Link> */}
     </View>
   );
 }
+
