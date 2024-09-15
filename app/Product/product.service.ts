@@ -20,9 +20,20 @@ export const productApi = createApi({
                 return final;
             }
         }),
-        getById : build.query<Product, number>({
+        getById : build.query<Product, string>({
             query: (id) => `/product/${id}`
         }),
+
+        updateProduct : build.mutation<Product, {id : string, body: Product}>({
+            query(data){
+                return {
+                    url: `/product/${data.id}`,
+                    method: 'PUT',
+                    body: data.body
+                }
+            }
+        }),
+
         createPost: build.mutation<Product, Omit<Product, 'id'>>({
             query(body) {
                 return {
@@ -33,7 +44,7 @@ export const productApi = createApi({
             },
             invalidatesTags: (result, error, body) => [{ type: 'Post', id: 'LIST' }]
         }),
-        deletePost: build.mutation<{}, number>({
+        deletePost: build.mutation<{}, string>({
             query(id) {
                 return {
                     url: `/product/${id}`,
@@ -44,4 +55,4 @@ export const productApi = createApi({
         })
     })
 })
-export const { useGetPostsQuery, useCreatePostMutation, useDeletePostMutation, useGetByIdQuery } = productApi
+export const { useGetPostsQuery, useCreatePostMutation, useDeletePostMutation, useGetByIdQuery, useUpdateProductMutation } = productApi

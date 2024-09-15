@@ -1,22 +1,22 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
 interface productState {
-    productId: number
+    productId: string
 }
 
 const initialState: productState = {
-    productId: 1
+    productId: ""
 }
 
 const productSlice = createSlice({
     name: 'product',
     initialState,
     reducers: {
-        startEditPost: (state, action: PayloadAction<number>) => {
+        startEditPost: (state, action: PayloadAction<string>) => {
             state.productId = action.payload
         },
         cancelEditPost: (state) => {
-            state.productId = 0
+            state.productId = ""
         }
     }
 })

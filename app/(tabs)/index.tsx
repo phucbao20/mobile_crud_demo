@@ -4,7 +4,7 @@ import { Text, View } from 'react-native';
 import { DataTable, Button } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 import { useDeletePostMutation, useGetPostsQuery } from '../Product/product.service';
-import { startEditPost } from '../Product/product.slice';
+import { cancelEditPost, startEditPost } from '../Product/product.slice';
 import { Fragment } from 'react';
 
 
@@ -17,10 +17,15 @@ export default function HomeScreen() {
   const { data, isLoading, isFetching } = useGetPostsQuery()
   const [deletePost] = useDeletePostMutation()
   const distpath = useDispatch()
-  const startEdit = (id: number) => {
+  const startEdit = (id: string) => {
     distpath(startEditPost(id))
   }
-  const handlDelete = (id: number) => {
+
+  const startCreate = () => {
+    distpath(cancelEditPost())
+  }
+
+  const handlDelete = (id: string) => {
     deletePost(id)
   }
 
@@ -32,7 +37,7 @@ export default function HomeScreen() {
         </View>
         <View className='!pt-[10]'>
           <View className='pl-52'>
-            <Button className='bg-green-700 w-40' mode="contained"> <Link replace href="./demo-route">Create</Link> </Button>
+            <Button className='bg-green-700 w-40' mode="contained"> <Link  onPress={() => startCreate()} href="./createProduct">Create</Link> </Button>
           </View>
           <DataTable className='w-full h-full'>
             <DataTable.Header>
